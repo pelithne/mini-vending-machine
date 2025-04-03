@@ -11,6 +11,7 @@ resource "azurerm_resource_group" "rg" {
   tags     = var.common_tags
 }
 
+/*
 // Create a Virtual Network Manager (optional, for IPAM)
 resource "azurerm_virtual_network_manager" "vnm" {
   name                = "myVnetManager"
@@ -18,6 +19,7 @@ resource "azurerm_virtual_network_manager" "vnm" {
   resource_group_name = azurerm_resource_group.rg.name
   tags                = var.common_tags
 }
+*/
 
 // Create the NSG
 resource "azurerm_network_security_group" "nsg" {
@@ -43,4 +45,10 @@ resource "azurerm_subnet" "subnet" {
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = ["10.0.1.0/24"]
 
+}
+
+// Associate the NSG to the subnet
+resource "azurerm_subnet_network_security_group_association" "subnet_nsg" {
+  subnet_id                 = azurerm_subnet.subnet.id
+  network_security_group_id = azurerm_network_security_group.nsg.id
 }
