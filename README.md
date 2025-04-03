@@ -1,1 +1,1 @@
-# mini-vending-machine
+This repo contains terraform which aims at creating a new subscription with subnets, nsgs, tags, etc. A mini subscription vending machine.
