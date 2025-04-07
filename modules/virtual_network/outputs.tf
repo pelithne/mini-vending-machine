@@ -8,12 +8,12 @@ output "vnet_id" {
   value       = azurerm_virtual_network.vnet.id
 }
 
-output "subnet_ids" {
-  description = "The IDs of the subnets."
-  value       = [for subnet in azurerm_subnet.subnet : subnet.id]
+output "subnet_id" {
+  description = "The ID of the created subnet"
+  value       = azurerm_subnet.subnet.id
 }
 
-output "route_table_ids" {
-  description = "The IDs of the route tables."
-  value       = [for rt in azurerm_route_table.udr : rt.id]
+output "route_table_id" {
+  description = "The ID of the created route table"
+  value       = azurerm_route_table.udr.id
 }

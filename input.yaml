@@ -1,6 +1,6 @@
 spoke:
   subscription_id: "658cd127-a693-4622-85be-4c340afdc81a"
-  subscription_name: "Spoke-2" # Added subscription_name
+  subscription_name: "SpokeSubscription"
   location: "swedencentral"
   environment: "prod"
   tags:
@@ -11,26 +11,21 @@ spoke:
     BusinessUnit: "Retail"
     Region: "swedencentral"
   address_space: ["10.2.0.0/16"]
-  subnets:
-    - name: "subnet-1"
-      address_prefixes: ["10.2.1.0/24"]
-    - name: "subnet-2"
-      address_prefixes: ["10.2.2.0/24"]
-  route_tables:
-    - name: "udr-1"
-      route:
-        name: "default-route"
-        address_prefix: "0.0.0.0/0"
-        next_hop_type: "VirtualAppliance"
-        next_hop_in_ip_address: "10.1.0.99"
-    - name: "udr-2"
-      route:
-        name: "internal-route"
-        address_prefix: "10.3.0.0/16"
-        next_hop_type: "VirtualNetworkGateway"
-        next_hop_in_ip_address: null
+  subnet:
+    name: "subnet-1"
+    address_prefix: "10.2.1.0/24"
+  route_table:
+    route:
+      name: "default-route"
+      address_prefix: "0.0.0.0/0"
+      next_hop_type: "VirtualAppliance"
+      next_hop_in_ip_address: "10.1.0.99"
 
 hub:
   subscription_id: "6e2cc04e-7586-4343-86e1-e78513de21d6"
   resource_group_name: "Default-ActivityLogAlerts"
   virtual_network_name: "hub_vnet"
+
+role_assignment:
+  object_id: "09d19265-951e-498b-ad24-0ba62b1e7e3e"
+  role_definition_name: "Contributor"

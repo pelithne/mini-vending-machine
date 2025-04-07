@@ -1,21 +1,21 @@
+variable "subnet_id" {
+  description = "The ID of the subnet to associate with the NSG"
+  type        = string
+}
+
 variable "nsg_name" {
   description = "The name of the Network Security Group"
   type        = string
 }
 
 variable "location" {
-  description = "The location where the NSG will be created"
+  description = "The location of the NSG"
   type        = string
 }
 
 variable "resource_group_name" {
-  description = "The name of the resource group where the NSG will be created"
+  description = "The name of the resource group"
   type        = string
-}
-
-variable "subnet_ids" {
-  description = "A list of subnet IDs to associate with the NSG"
-  type        = list(string)
 }
 
 variable "tags" {
