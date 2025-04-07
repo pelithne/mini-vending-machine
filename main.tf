@@ -13,22 +13,21 @@ terraform {
 
 provider "azurerm" {
   alias           = "spoke"
-  subscription_id = "658cd127-a693-4622-85be-4c340afdc81a"
+  subscription_id = yamldecode(file("${path.module}/input.yaml")).spoke.subscription_id
   features {}
 }
 
 provider "azurerm" {
   alias           = "hub"
-  subscription_id = "6e2cc04e-7586-4343-86e1-e78513de21d6"
+  subscription_id = yamldecode(file("${path.module}/input.yaml")).hub.subscription_id
   features {}
 }
 
 module "spoke_resource_group" {
-  source              = "./modules/resource_group"
-  subscription_id     = "658cd127-a693-4622-85be-4c340afdc81a" # Spoke subscription
-  resource_group_name = "spoke"
-  location            = "swedencentral"
-  environment         = "prod"
+  source          = "./modules/resource_group"
+  subscription_id = yamldecode(file("${path.module}/input.yaml")).spoke.subscription_id
+  location        = yamldecode(file("${path.module}/input.yaml")).spoke.location
+  environment     = yamldecode(file("${path.module}/input.yaml")).spoke.environment
 
   providers = {
     azurerm = azurerm.spoke
@@ -37,44 +36,14 @@ module "spoke_resource_group" {
 
 module "spoke_virtual_network" {
   source              = "./modules/virtual_network"
-  subscription_id     = "658cd127-a693-4622-85be-4c340afdc81a" # Spoke subscription
-  environment         = module.spoke_resource_group.environment
-  location            = module.spoke_resource_group.location
-  resource_group_name = module.spoke_resource_group.name
+  subscription_id     = yamldecode(file("${path.module}/input.yaml")).spoke.subscription_id
+  environment         = yamldecode(file("${path.module}/input.yaml")).spoke.environment
+  location            = yamldecode(file("${path.module}/input.yaml")).spoke.location
+  resource_group_name = module.spoke_resource_group.name # Use the auto-generated name
+  address_space       = yamldecode(file("${path.module}/input.yaml")).spoke.address_space
+  subnets             = yamldecode(file("${path.module}/input.yaml")).spoke.subnets
+  route_tables        = yamldecode(file("${path.module}/input.yaml")).spoke.route_tables
   serial              = module.spoke_resource_group.serial
-  address_space       = ["10.2.0.0/16"]
-
-  subnets = [
-    {
-      name            = "subnet-1"
-      address_prefixes = ["10.2.1.0/24"]
-    },
-    {
-      name            = "subnet-2"
-      address_prefixes = ["10.2.2.0/24"]
-    }
-  ]
-
-  route_tables = [
-    {
-      name  = "udr-1"
-      route = {
-        name                   = "default-route"
-        address_prefix         = "0.0.0.0/0"
-        next_hop_type          = "VirtualAppliance"
-        next_hop_in_ip_address = "10.1.0.99"
-      }
-    },
-    {
-      name  = "udr-2"
-      route = {
-        name                   = "internal-route"
-        address_prefix         = "10.3.0.0/16"
-        next_hop_type          = "VirtualNetworkGateway"
-        next_hop_in_ip_address = null
-      }
-    }
-  ]
 
   providers = {
     azurerm = azurerm.spoke
@@ -83,17 +52,17 @@ module "spoke_virtual_network" {
 
 data "azurerm_virtual_network" "hub_vnet" {
   provider            = azurerm.hub
-  name                = "hub_vnet"
-  resource_group_name = "Default-ActivityLogAlerts"
+  name                = yamldecode(file("${path.module}/input.yaml")).hub.virtual_network_name
+  resource_group_name = yamldecode(file("${path.module}/input.yaml")).hub.resource_group_name
 }
 
 module "virtual_network_peering" {
   source = "./modules/virtual_network_peering"
 
-  spoke_resource_group_name  = module.spoke_resource_group.name
+  spoke_resource_group_name  = module.spoke_resource_group.name # Use the auto-generated name
   spoke_virtual_network_name = module.spoke_virtual_network.vnet_name
-  hub_resource_group_name    = data.azurerm_virtual_network.hub_vnet.resource_group_name
-  hub_virtual_network_name   = data.azurerm_virtual_network.hub_vnet.name
+  hub_resource_group_name    = yamldecode(file("${path.module}/input.yaml")).hub.resource_group_name
+  hub_virtual_network_name   = yamldecode(file("${path.module}/input.yaml")).hub.virtual_network_name
   spoke_virtual_network_id   = module.spoke_virtual_network.vnet_id
   hub_virtual_network_id     = data.azurerm_virtual_network.hub_vnet.id
   allow_virtual_network_access = true

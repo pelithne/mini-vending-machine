@@ -10,5 +10,8 @@
 
 ## Tags
 
-## Github action integration
+## Github action.
+DONE
 
+## Yaml as input.
+DONE
