@@ -87,3 +87,16 @@ module "virtual_network_peering" {
     azurerm.hub   = azurerm.hub
   }
 }
+
+module "network_security_group" {
+  source              = "./modules/network_security_group"
+  nsg_name            = "nsg-alz-${yamldecode(file("${path.module}/input.yaml")).spoke.environment}-${yamldecode(file("${path.module}/input.yaml")).spoke.location}"
+  location            = yamldecode(file("${path.module}/input.yaml")).spoke.location
+  resource_group_name = module.spoke_resource_group.name
+  subnet_ids          = module.spoke_virtual_network.subnet_ids
+  tags                = yamldecode(file("${path.module}/input.yaml")).spoke.tags
+
+  providers = {
+    azurerm = azurerm.spoke
+  }
+}
