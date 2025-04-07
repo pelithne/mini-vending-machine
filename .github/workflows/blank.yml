@@ -5,6 +5,11 @@ on:
     branches:
       - main
 
+# You must enable the id-token permission for OIDC to work
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
