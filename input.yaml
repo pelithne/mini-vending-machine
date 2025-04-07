@@ -1,7 +1,15 @@
 spoke:
   subscription_id: "658cd127-a693-4622-85be-4c340afdc81a"
+  subscription_name: "Spoke-2" # Added subscription_name
   location: "swedencentral"
   environment: "prod"
+  tags:
+    Environment: "Prod"
+    Owner: "ITOps"
+    CostCenter: "CC12345"
+    Project: "AzureLandingZone"
+    BusinessUnit: "Retail"
+    Region: "swedencentral"
   address_space: ["10.2.0.0/16"]
   subnets:
     - name: "subnet-1"
@@ -24,5 +32,5 @@ spoke:
 
 hub:
   subscription_id: "6e2cc04e-7586-4343-86e1-e78513de21d6"
-  resource_group_name: "Default-ActivityLogAlerts" # Add this line
+  resource_group_name: "Default-ActivityLogAlerts"
   virtual_network_name: "hub_vnet"

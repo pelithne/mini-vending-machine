@@ -18,3 +18,9 @@ variable "environment" {
   type        = string
   default     = "prod"
 }
+
+variable "tags" {
+  description = "Tags to apply to the resource group."
+  type        = map(string)
+  default     = {} # Optional: Provide an empty map as the default value
+}
