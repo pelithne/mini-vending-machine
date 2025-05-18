@@ -1,31 +1,64 @@
+# -------------------------------
+# Spoke configuration
+# -------------------------------
 spoke:
-  subscription_id: "658cd127-a693-4622-85be-4c340afdc81a"
-  subscription_name: "SpokeSubscription"
+  # Azure subscription ID for the spoke environment.
+  subscription_id: "<your-spoke-subscription-id>"
+  # Friendly name for the subscription (for documentation/reference).
+  subscription_name: "alz-application-spoke"
+  # Azure region where resources will be deployed (e.g., westeurope, swedencentral).
   location: "swedencentral"
+  # Environment type (e.g., dev, test, prod).
   environment: "prod"
+  # Tags applied to all resources for cost management and organization.
   tags:
-    Environment: "Prod"
-    Owner: "ITOps"
-    CostCenter: "CC12345"
-    Project: "AzureLandingZone"
-    BusinessUnit: "Retail"
-    Region: "swedencentral"
+    Environment: "Prod"         # Environment tag (dev, test, prod, etc.)
+    Owner: "ITOps"              # Resource owner or team
+    CostCenter: "CC12345"       # Cost center for billing
+    Project: "AzureLandingZone" # Project or workload name
+    BusinessUnit: "Retail"      # Business unit or department
+    Region: "swedencentral"     # Region tag for reference
+  # Address space for the spoke virtual network (CIDR notation).
   address_space: ["10.2.0.0/16"]
   subnet:
+    # Name of the subnet within the spoke VNet.
     name: "subnet-1"
+    # Address prefix for the subnet (CIDR notation).
     address_prefix: "10.2.1.0/24"
   route_table:
     route:
+      # Name of the route in the route table.
       name: "default-route"
+      # Address prefix for the route (e.g., 0.0.0.0/0 for all traffic).
       address_prefix: "0.0.0.0/0"
+      # Next hop type (e.g., VirtualAppliance, Internet, VnetLocal).
       next_hop_type: "VirtualAppliance"
-      next_hop_in_ip_address: "10.1.0.99"
+      # IP address of the next hop (e.g., firewall or NVA).
+      next_hop_in_ip_address: "10.0.1.4"
+  budget:
+    # Monthly budget amount (in your Azure billing currency).
+    amount: 50
+    # List of email addresses to notify when budget thresholds are reached.
+    notification_emails:
+      - "<email address to notify>"
+      - "email address to notify"
 
+# -------------------------------
+# Hub network configuration
+# -------------------------------
 hub:
-  subscription_id: "6e2cc04e-7586-4343-86e1-e78513de21d6"
-  resource_group_name: "Default-ActivityLogAlerts"
+  # Azure subscription ID for the hub environment.
+  subscription_id: "<your-hub-subscription-id>"
+  # Resource group name where the hub VNet is deployed.
+  resource_group_name: "hub-rg"
+  # Name of the hub virtual network.
   virtual_network_name: "hub_vnet"
 
-role_assignment:
-  object_id: "09d19265-951e-498b-ad24-0ba62b1e7e3e"
-  role_definition_name: "Contributor"
+# -------------------------------
+# Entra security group configuration
+# -------------------------------
+entra_security_group:
+  # Base name for the security group. Recommended naming convention: <org>-<env>-<workload>-sg[-<optional-suffix>].
+  name: "alz-retail-prod-spoke1-sg-team-eagle"
+  # Azure role to assign to the security group (e.g., Contributor, Reader, or a custom role).
+  role_name: "Contributor"

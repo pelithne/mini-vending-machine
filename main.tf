@@ -73,7 +73,8 @@ module "network_security_group" {
   resource_group_name = module.spoke_resource_group.name
   subnet_id           = module.virtual_network.subnet_id
   tags                = yamldecode(file("${path.module}/input.yaml")).spoke.tags
-
+  subscription_id = yamldecode(file("${path.module}/input.yaml")).spoke.subscription_id
+  
   providers = {
     azurerm = azurerm.spoke
   }
@@ -106,11 +107,31 @@ module "virtual_network_peering" {
 module "role_assignment" {
   source               = "./modules/role_assignment"
   scope                = "/subscriptions/${yamldecode(file("${path.module}/input.yaml")).spoke.subscription_id}"
-  role_definition_name = yamldecode(file("${path.module}/input.yaml")).role_assignment.role_definition_name
-  object_id            = yamldecode(file("${path.module}/input.yaml")).role_assignment.object_id
+  role_definition_name = yamldecode(file("${path.module}/input.yaml")).entra_security_group.role_name
+  object_id            = module.entra_security_group.object_id
   subscription_id      = yamldecode(file("${path.module}/input.yaml")).spoke.subscription_id
-  
+
   providers = {
     azurerm = azurerm.spoke
   }
+}
+
+locals {
+  input = yamldecode(file("${path.module}/input.yaml"))
+}
+
+module "azure_budget" {
+  source           = "./modules/budget"
+  budget_name      = "subscription-budget-${local.input.spoke.environment}"
+  subscription_id  = "/subscriptions/${local.input.spoke.subscription_id}"
+  amount           = local.input.spoke.budget.amount
+  notification_emails = [
+    { threshold = 80, operator = "GreaterThan", emails = local.input.spoke.budget.notification_emails },
+    { threshold = 100, operator = "GreaterThan", emails = local.input.spoke.budget.notification_emails }
+  ]
+}
+
+module "entra_security_group" {
+  source     = "./modules/entra_security_group"
+  group_name = local.input.entra_security_group.name
 }
