@@ -24,6 +24,39 @@ This repository contains Terraform code for automating the creation of a new Azu
 - **Hub-Spoke Topology**: Supports peering with a central hub network.
 
 ## How to Operate the `input.yaml` File
+
+Follow these steps to clone the repository and execute the Terraform scripts:
+
+### 1. Clone the Repository
+
+```sh
+git clone https://github.com/pelithne/mini-vending-machine.git
+cd mini-vending-machine
+```
+
+### 2. Configure The Input File.
+
+ - Open input.yaml in your preferred editor.
+ - Fill in all required fields as desceribed in the Input File Reference section below.
+ - Save your changes.
+
+### 3. Initialize Terraform
+```sh
+terraform init
+```
+
+### 4. Review The Planned Changes 
+
+```sh
+terraform plan -out plan.out
+```
+
+### 5. Apply Changes 
+
+```sh
+terraform apply "plan.out"
+```
+
 ## Input File Reference (`input.yaml`)
 
 Below is a table describing each parameter in the `input.yaml` file, along with detailed explanations and examples:
@@ -56,20 +89,3 @@ Below is a table describing each parameter in the `input.yaml` file, along with 
 | `entra_security_group`   | `role_name`                  | Azure role to assign to the security group (e.g., `Contributor`, `Reader`, or a custom role).         | `Contributor`                     |
 
 ---
-
-### Parameter Details
-
-- **subscription_id**: The unique identifier for your Azure subscription. Required for both spoke and hub to ensure resources are deployed in the correct context.
-- **subscription_name**: A human-readable name for your subscription, useful for documentation and clarity.
-- **location**: Specifies the Azure region where resources will be provisioned. Use Azure region codes.
-- **environment**: Indicates the deployment environment (e.g., production, development, or testing).
-- **tags**: Key-value pairs for resource tagging, which help with cost management, organization, and governance.
-- **address_space**: The IP address range(s) for your spoke virtual network, in CIDR notation.
-- **subnet**: Defines the subnet within the spoke VNet, including its name and address prefix.
-- **route_table**: Contains routing configuration for the subnet, including route name, address prefix, next hop type, and next hop IP.
-- **budget**: Sets a monthly spending limit for the subscription and specifies who will be notified if thresholds are reached.
-- **hub**: Configuration for the central hub network, including its subscription, resource group, and VNet name.
-- **entra_security_group**: Specifies the base name for the Microsoft Entra security group and the Azure role to assign to it.
-
-> **Tip:**  
-> Always review and update the `input.yaml` file before running Terraform to ensure all values are correct and appropriate for your environment. Comments in the file provide additional guidance for each parameter.
